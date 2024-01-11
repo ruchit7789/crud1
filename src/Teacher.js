@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 
 function Teacher() {
-  const [teachers, setTeachers] = useState([
-    { id: 1, name: "ruchit", craatedAt: "123" },
-    { id: 2, name: "sumil", craatedAt: "12rt3" },
-  ]);
+  const [teachers, setTeachers] = useState([]);
+  const [payload, setPayLoad] = useState({
+    data: {
+      name: "deepak",
+    },
+  });
+
+  const [nameop, setNameop] = useState("");
 
   useEffect(() => {
     fetch(` http://localhost:1337/api/teachers `)
@@ -26,47 +30,69 @@ function Teacher() {
         console.log(error);
       });
   }, []);
+
+  //////for update a api teacher/////
+
+  let sendData = () => {
+    fetch(`  http://localhost:1337/api/teachers  `, {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        if (data) {
+          alert("teacher added ");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  let changevalue = (e) => {
+    console.log(e.target.value);
+    setNameop(e.target.value);
+    console.log(" HOOK name", nameop);
+    setPayLoad({
+      ...payload,
+      data: {
+        name: document.querySelector("input#teachername").value,
+      },
+    });
+  };
+
   return (
     <div className="App">
       <>
         <div className="container">
           <form>
             <div className="mb-3">
-              <label htmlFor="exampleInputEmail1" className="form-label">
-                Email address
+              <label htmlFor="teachername" className="form-label">
+                Teacher Name
               </label>
               <input
-                type="email"
+                type="text"
                 className="form-control"
-                id="exampleInputEmail1"
-                aria-describedby="emailHelp"
-              />
-              <div id="emailHelp" className="form-text">
-                We'll never share your email with anyone else.
-              </div>
-            </div>
-            <div className="mb-3">
-              <label htmlFor="exampleInputPassword1" className="form-label">
-                Password
-              </label>
-              <input
-                type="password"
-                className="form-control"
-                id="exampleInputPassword1"
+                id="teachername"
+                name="name"
+                onKeyUp={(e) => {
+                  changevalue(e);
+                }}
               />
             </div>
-            <div className="mb-3 form-check">
-              <input
-                type="checkbox"
-                className="form-check-input"
-                id="exampleCheck1"
-              />
-              <label className="form-check-label" htmlFor="exampleCheck1">
-                Check me out
-              </label>
-            </div>
-            <button type="submit" className="btn btn-primary">
-              Submit
+            <button
+              type="button"
+              className="btn btn-primary  "
+              onClick={() => {
+                sendData();
+              }}
+            >
+              click me
             </button>
           </form>
           <br></br>
